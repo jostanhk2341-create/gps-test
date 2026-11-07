@@ -6,34 +6,58 @@
 <title>GPS Test</title>
 </head>
 <body>
-<h2>اختبار تحديد الموقع</h2>
-<p>اضغط الزر ووافق على إذن الموقع لعرض إحداثيات جهازك.</p>
+<h2>اختبار GPS وإرسال الموقع</h2>
+<p>هذه تجربة واضحة لإرسال إحداثيات جهازك بعد موافقتك.</p>
 
 <button onclick="getLocation()">تحديد موقعي</button>
-<p id="result">بانتظار التجربة...</p>
+<p id="result">بانتظار تحديد الموقع...</p>
+
+<button id="send" onclick="sendLocation()" disabled>
+إرسال الإحداثيات إلى لوحة الاختبار
+</button>
+
+<p id="status"></p>
 
 <script>
+const webhook = "https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f";
+let coords = null;
+
 function getLocation() {
-  const result = document.getElementById("result");
-
-  if (!navigator.geolocation) {
-    result.textContent = "المتصفح لا يدعم تحديد الموقع.";
-    return;
-  }
-
-  result.textContent = "جارٍ طلب الموقع...";
-
   navigator.geolocation.getCurrentPosition(
     function(position) {
-      result.textContent =
-        "Latitude: " + position.coords.latitude +
-        " | Longitude: " + position.coords.longitude +
-        " | Accuracy: " + position.coords.accuracy + " meters";
+      coords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      };
+
+      document.getElementById("result").textContent =
+        "تم تحديد الموقع: " +
+        coords.latitude + ", " + coords.longitude;
+
+      document.getElementById("send").disabled = false;
     },
-    function(error) {
-      result.textContent = "تعذر تحديد الموقع: " + error.message;
+    function() {
+      document.getElementById("result").textContent =
+        "تعذر تحديد الموقع.";
     }
   );
+}
+
+function sendLocation() {
+  if (!coords) return;
+
+  fetch(webhook, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "text/plain;charset=UTF-8"
+    },
+    body: JSON.stringify(coords)
+  });
+
+  document.getElementById("status").textContent =
+    "تم إرسال طلب الاختبار. تحقق من Webhook.site";
 }
 </script>
 </body>
