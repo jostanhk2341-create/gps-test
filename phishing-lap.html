@@ -41,6 +41,7 @@
 
     #result {
       color: #176b37;
+      overflow-wrap: anywhere;
     }
   </style>
 </head>
@@ -69,34 +70,54 @@
     </form>
 
     <p id="result" role="status"></p>
- <button type="button" id="testRequest">
-  إرسال طلب اختبار
- </button>
+
+    <button type="button" id="testRequest">
+      إرسال طلب اختبار HTTP
+    </button>
   </div>
 
   <script>
     const form = document.getElementById("loginForm");
     const result = document.getElementById("result");
+    const testButton = document.getElementById("testRequest");
 
+    // محاكاة تسجيل الدخول دون إرسال البيانات
     form.addEventListener("submit", function(event) {
       event.preventDefault();
 
       result.textContent =
-        "نجحت المحاكاة: لم يتم إرسال أو تخزين أي بيانات.";
-      
+        "نجحت المحاكاة: لم يتم إرسال أو تخزين بيانات الدخول.";
+
       form.reset();
     });
- document.getElementById("testRequest").addEventListener("click", async function() {
-  const response = await fetch("https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f", {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain"
-    },
-    body: "Cybersecurity Lab Test"
-  });
 
-  result.textContent = "تم إرسال طلب الاختبار.";
-});
+    // إرسال طلب اختبار مستقل يحتوي على نص ثابت فقط
+    testButton.addEventListener("click", async function() {
+      testButton.disabled = true;
+      result.textContent = "جارٍ تنفيذ طلب الاختبار...";
+
+      try {
+        await fetch(
+          "https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f",
+          {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            body: "Cybersecurity Lab Test"
+          }
+        );
+
+        result.textContent =
+          "انتهى تنفيذ الطلب من المتصفح. تحقق من وصوله في Webhook.";
+      } catch (error) {
+        result.textContent =
+          "تعذر تنفيذ الطلب. تحقق من الاتصال بالإنترنت.";
+      } finally {
+        testButton.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
