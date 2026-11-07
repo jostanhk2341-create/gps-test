@@ -1,63 +1,70 @@
+
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GPS Test</title>
 </head>
 <body>
-<h2>اختبار GPS وإرسال الموقع</h2>
-<p>هذه تجربة واضحة لإرسال إحداثيات جهازك بعد موافقتك.</p>
+<h2>اختبار GPS والإرسال التلقائي</h2>
 
-<button onclick="getLocation()">تحديد موقعي</button>
-<p id="result">بانتظار تحديد الموقع...</p>
+<p>
+هذه تجربة تعليمية. بعد موافقتك على تحديد الموقع،
+سيتم إرسال إحداثيات جهازك تلقائياً إلى لوحة الاختبار.
+</p>
 
-<button id="send" onclick="sendLocation()" disabled>
-إرسال الإحداثيات إلى لوحة الاختبار
-</button>
+<button onclick="getLocation()">موافقة وتحديد موقعي</button>
 
+<p id="result">بانتظار موافقتك...</p>
 <p id="status"></p>
 
 <script>
 const webhook = "https://webhook.site/5d7ed63c-8d26-46ea-b7bc-7d8c3af1230f";
-let coords = null;
 
 function getLocation() {
+  document.getElementById("status").textContent =
+    "بانتظار إذن الموقع...";
+
   navigator.geolocation.getCurrentPosition(
-    function(position) {
-      coords = {
+    async function(position) {
+      const coords = {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
         accuracy: position.coords.accuracy
       };
 
       document.getElementById("result").textContent =
-        "تم تحديد الموقع: " +
-        coords.latitude + ", " + coords.longitude;
+        "تم تحديد الموقع بنجاح.";
 
-      document.getElementById("send").disabled = false;
+      document.getElementById("status").textContent =
+        "جارٍ إرسال الإحداثيات تلقائياً...";
+
+      try {
+        await fetch(webhook, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=UTF-8"
+          },
+          body: JSON.stringify(coords)
+        });
+
+        document.getElementById("status").textContent =
+          "تم إرسال طلب الاختبار. تحقق من لوحة Webhook.";
+      } catch (error) {
+        document.getElementById("status").textContent =
+          "تعذر إرسال الطلب.";
+      }
     },
-    function() {
+    function(error) {
       document.getElementById("result").textContent =
-        "تعذر تحديد الموقع.";
+        "لم يتم تحديد الموقع.";
+
+      document.getElementById("status").textContent =
+        "لم تتم الموافقة أو تعذر الوصول إلى GPS.";
     }
   );
-}
-
-function sendLocation() {
-  if (!coords) return;
-
-  fetch(webhook, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "text/plain;charset=UTF-8"
-    },
-    body: JSON.stringify(coords)
-  });
-
-  document.getElementById("status").textContent =
-    "تم إرسال طلب الاختبار. تحقق من Webhook.site";
 }
 </script>
 </body>
